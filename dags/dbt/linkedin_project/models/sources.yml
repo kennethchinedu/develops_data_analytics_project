@@ -1,0 +1,26 @@
+version: 2
+
+sources:
+  - name: JOBS
+    schema: RAW
+    tables: 
+      - name: BENEFITS
+        identifier: BENEFITS
+      - name: COMPANIES
+        identifier: COMPANIES
+      - name: COMPANY_INDUSTRIES
+        identifier: COMPANY_INDUSTRIES
+      - name: EMPLOYEE_COUNTS
+        identifier: EMPLOYEE_COUNTS
+      - name: INDUSTRIES
+        identifier: INDUSTRIES
+      - name: JOB_INDUSTRIES
+        identifier: JOB_INDUSTRIES
+      - name: JOB_SKILLS
+        identifier: JOB_SKILLS
+      - name: POSTINGS
+        identifier: POSTINGS
+      - name: SALARIES
+        identifier: SALARIES
+      - name: SKILLS
+        identifier: SKILLS
