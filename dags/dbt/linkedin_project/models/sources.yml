@@ -24,3 +24,5 @@ sources:
         identifier: SALARIES
       - name: SKILLS
         identifier: SKILLS
+      - name: COMPANY_SPECIALITIES
+        identifier: COMPANY_SPECIALITIES
