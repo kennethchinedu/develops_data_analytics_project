@@ -6,12 +6,13 @@ from cosmos.profiles import SnowflakeUserPasswordProfileMapping
 
 
 profile_config = ProfileConfig(
-    profile_name="default",
+    profile_name="linkedin_project",
     target_name="dev",
-    profile_mapping=SnowflakeUserPasswordProfileMapping(
-        conn_id="snowflake", 
-        profile_args={"database": "project", "schema": "raw"},
-    )
+    profiles_yml_filepath="/usr/local/airflow/dags/dbt/linkedin_project/profiles.yml"
+    # profile_mapping=SnowflakeUserPasswordProfileMapping(
+    #     conn_id="snowflake", 
+    #     profile_args={"database": "project", "schema": "raw"},
+    # )
 )
 
 dbt_snowflake_dag = DbtDag(
