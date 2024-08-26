@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest    
     environment: prod
 
+
     env:
       SNOWFLAKE_ACCOUNT: ${{ secrets.ACCOUNT }}
       SNOWFLAKE_USER: ${{ secrets.USER }}
