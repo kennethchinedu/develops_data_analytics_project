@@ -38,7 +38,7 @@ jobs:
           python-version: '3.x'  # Replace with your Python version if needed
 
       - name: Install astronomer
-        run: astro dev start
+        run: sudo astro dev start
         shell: bash
 
 #       - name: Upgrade pip
