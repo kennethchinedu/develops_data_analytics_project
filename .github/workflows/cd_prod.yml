@@ -1,0 +1,94 @@
+name: CI_dev Workflow
+
+on:
+  push:
+    branches:
+      - master
+#   pull_request:
+#     branches:
+#       - master 
+  
+  workflow_dispatch:
+
+jobs:
+  Test:
+    name: Run on test
+    defaults:
+      run:
+        shell: bash
+    runs-on: ubuntu-latest    
+    environment: prod
+
+    env:
+      SNOWFLAKE_ACCOUNT: ${{ secrets.ACCOUNT }}
+      SNOWFLAKE_USER: ${{ secrets.USER }}
+      SNOWFLAKE_PASSWORD: ${{ secrets.PASSWORD }}
+      SNOWFLAKE_DATABASE: ${{ secrets.DATABASE }}
+      SNOWFLAKE_WAREHOUSE: ${{ secrets.WAREHOUSE }}
+      SNOWFLAKE_SCHEMA: ${{ secrets.SCHEMA }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.*'  
+
+      # - name: Install astronomer
+      #   run: sudo astro dev start
+      #   shell: bash
+
+      - name: Upgrade pip
+        run: |
+          python -m pip install --upgrade pip
+        shell: bash
+
+      - name: Install requirements
+        run: |
+          pip install -r requirements.txt
+        shell: bash
+#------------------------------------
+      - name: Prepare dbt profiles
+        run: |
+          cd dags/dbt/linkedin_project
+          mkdir -p ~/.dbt
+          echo 'linkedin_project:' > ~/.dbt/profiles.yml
+          echo '  target: dev' >> ~/.dbt/profiles.yml
+          echo '  outputs:' >> ~/.dbt/profiles.yml
+          echo '    dev:' >> ~/.dbt/profiles.yml
+          echo '      type: snowflake' >> ~/.dbt/profiles.yml
+          echo "      account: $SNOWFLAKE_ACCOUNT" >> ~/.dbt/profiles.yml
+          echo "      user: $SNOWFLAKE_USER" >> ~/.dbt/profiles.yml
+          echo "      password: $SNOWFLAKE_PASSWORD" >> ~/.dbt/profiles.yml
+          echo "      database: $SNOWFLAKE_DATABASE" >> ~/.dbt/profiles.yml
+          echo "      warehouse: $SNOWFLAKE_WAREHOUSE" >> ~/.dbt/profiles.yml
+          echo "      schema: $SNOWFLAKE_SCHEMA" >> ~/.dbt/profiles.yml
+        shell: bash
+
+      - name: Run dbt deps
+        run: | 
+          cd dags/dbt/linkedin_project
+          dbt deps --profiles-dir ~/.dbt
+        shell: bash
+
+      - name: Run dbt test with linkedin_project profile
+        run: |
+          cd dags/dbt/linkedin_project
+          dbt test --profiles-dir ~/.dbt --profile linkedin_project
+        shell: bash
+      
+      - name: Run dbt with linkedin_project profile
+        run: |
+          cd dags/dbt/linkedin_project
+          dbt run --profiles-dir ~/.dbt --profile linkedin_project
+        shell: bash
+
+  goodbye:
+    needs: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Goodbye world
+        run: echo "Bye World"
+        shell: bash
