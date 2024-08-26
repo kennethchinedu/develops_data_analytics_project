@@ -16,7 +16,7 @@ jobs:
     defaults:
       run:
         shell: bash
-    runs-on: ubuntu    
+    runs-on: ubuntu-latest    
     environment: dev
 
     env:
