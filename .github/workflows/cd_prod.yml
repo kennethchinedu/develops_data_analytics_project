@@ -1,9 +1,6 @@
-name: CI_dev Workflow
+name: Cd_prod Workflow
 
 on:
-#   push:
-#     branches:
-#       - master
   pull_request:
     branches:
       - master 
