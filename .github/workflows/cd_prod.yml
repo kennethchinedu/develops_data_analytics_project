@@ -1,12 +1,12 @@
 name: CI_dev Workflow
 
 on:
-  push:
-    branches:
-      - master
-#   pull_request:
+#   push:
 #     branches:
-#       - master 
+#       - master
+  pull_request:
+    branches:
+      - master 
   
   workflow_dispatch:
 
@@ -16,7 +16,7 @@ jobs:
     defaults:
       run:
         shell: bash
-    runs-on: ubuntu-latest    
+    runs-on: self-hosted    
     environment: prod
 
 
@@ -37,9 +37,9 @@ jobs:
         with:
           python-version: '3.*'  
 
-      # - name: Install astronomer
-      #   run: sudo astro dev start
-      #   shell: bash
+      - name: Install astronomer
+        run: sudo astro dev start
+        shell: bash
 
       - name: Upgrade pip
         run: |
@@ -50,7 +50,7 @@ jobs:
         run: |
           pip install -r requirements.txt
         shell: bash
-#------------------------------------
+# #------------------------------------
       - name: Prepare dbt profiles
         run: |
           cd dags/dbt/linkedin_project
@@ -68,23 +68,23 @@ jobs:
           echo "      schema: $SNOWFLAKE_SCHEMA" >> ~/.dbt/profiles.yml
         shell: bash
 
-      - name: Run dbt deps
-        run: | 
-          cd dags/dbt/linkedin_project
-          dbt deps --profiles-dir ~/.dbt
-        shell: bash
+#       - name: Run dbt deps
+#         run: | 
+#           cd dags/dbt/linkedin_project
+#           dbt deps --profiles-dir ~/.dbt
+#         shell: bash
 
-      - name: Run dbt test with linkedin_project profile
-        run: |
-          cd dags/dbt/linkedin_project
-          dbt test --profiles-dir ~/.dbt --profile linkedin_project
-        shell: bash
+#       - name: Run dbt test with linkedin_project profile
+#         run: |
+#           cd dags/dbt/linkedin_project
+#           dbt test --profiles-dir ~/.dbt --profile linkedin_project
+#         shell: bash
       
-      - name: Run dbt with linkedin_project profile
-        run: |
-          cd dags/dbt/linkedin_project
-          dbt run --profiles-dir ~/.dbt --profile linkedin_project
-        shell: bash
+#       - name: Run dbt with linkedin_project profile
+#         run: |
+#           cd dags/dbt/linkedin_project
+#           dbt run --profiles-dir ~/.dbt --profile linkedin_project
+#         shell: bash
 
   goodbye:
     needs: Test
@@ -95,4 +95,3 @@ jobs:
         shell: bash
 
 
-        
