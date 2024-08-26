@@ -20,13 +20,13 @@ jobs:
     
     environment: dev
 
-    env:
-      SNOWFLAKE_ACCOUNT: ${{ secrets.ACCOUNT }}
-      SNOWFLAKE_USER: ${{ secrets.USER }}
-      SNOWFLAKE_PASSWORD: ${{ secrets.PASSWORD }}
-      SNOWFLAKE_DATABASE: ${{ secrets.DATABASE }}
-      SNOWFLAKE_WAREHOUSE: ${{ secrets.WAREHOUSE }}
-      SNOWFLAKE_SCHEMA: ${{ secrets.SCHEMA }}
+    # env:
+      # SNOWFLAKE_ACCOUNT: ${{ secrets.ACCOUNT }}
+    #   SNOWFLAKE_USER: ${{ secrets.USER }}
+    #   SNOWFLAKE_PASSWORD: ${{ secrets.PASSWORD }}
+    #   SNOWFLAKE_DATABASE: ${{ secrets.DATABASE }}
+    #   SNOWFLAKE_WAREHOUSE: ${{ secrets.WAREHOUSE }}
+    #   SNOWFLAKE_SCHEMA: ${{ secrets.SCHEMA }}
 
     steps:
       - name: Checkout repository

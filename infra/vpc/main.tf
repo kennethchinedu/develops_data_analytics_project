@@ -4,6 +4,6 @@ provider "aws" {
 
 module "app-deployment" {
     source = "./module/vpc" 
-    ami = "ami-06c68f701d8090592"
+    ami = "ami-0a0e5d9c7acc336f1"
     instance_type = "t2.micro"
 }
