@@ -34,7 +34,7 @@ jobs:
       - name: Set up Python environment
         uses: actions/setup-python@v2
         with:
-          python-version: '3.5'  
+          python-version: '3.*'  
 
       # - name: Install astronomer
       #   run: sudo astro dev start
