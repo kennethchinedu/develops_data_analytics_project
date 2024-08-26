@@ -52,7 +52,7 @@ jobs:
 #------------------------------------
       - name: Prepare dbt profiles
         run: |
-          cd dags/dbt
+          cd dags/dbt/linkedin_project
           mkdir -p ~/.dbt
           echo 'linkedin_project:' > ~/.dbt/profiles.yml
           echo '  target: dev' >> ~/.dbt/profiles.yml
@@ -69,19 +69,19 @@ jobs:
 
       - name: Run dbt deps
         run: | 
-          cd dags/dbt
+          cd dags/dbt/linkedin_project
           dbt deps --profiles-dir ~/.dbt
         shell: bash
 
       - name: Run dbt test with linkedin_project profile
         run: |
-          cd dags/dbt
+          cd dags/dbt/linkedin_project
           dbt test --profiles-dir ~/.dbt --profile linkedin_project
         shell: bash
       
       - name: Run dbt with linkedin_project profile
         run: |
-          cd dags/dbt
+          cd dags/dbt/linkedin_project
           dbt run --profiles-dir ~/.dbt --profile linkedin_project
         shell: bash
 
