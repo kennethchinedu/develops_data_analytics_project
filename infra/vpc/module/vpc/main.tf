@@ -106,15 +106,18 @@ resource "aws_instance" "server1" {
   vpc_security_group_ids = [aws_security_group.sg.id]
   ami                    = var.ami
   instance_type          = var.instance_type
-  key_name      = aws_key_pair.deployer.key_name 
+  key_name               = aws_key_pair.deployer.key_name
   tags = {
     Name = "dev-server"
   }
 
   user_data = <<EOF
 #!/bin/bash
+exec > /var/log/user-data.log 2>&1
+set -x
+
 # Update package list and install required packages
-apt-get update
+apt-get update -y
 apt-get install -y ca-certificates curl
 
 # Create directory and download Docker's GPG key
@@ -123,17 +126,17 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/doc
 chmod a+r /etc/apt/keyrings/docker.asc
 
 # Add Docker repository to apt sources
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+echo "deb [arch=\$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \$(. /etc/os-release && echo "\$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 # Update package list again and install Docker packages
-apt-get update
+apt-get update -y
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-usermod -aG docker $USER >> /var/log/user-data.log 2>&1
 
-curl -sSL install.astronomer.io | sudo bash -s
+# Add the current user to the Docker group
+usermod -aG docker ubuntu
+
+# Install Astronomer
+curl -sSL install.astronomer.io | bash -s
+
 EOF
 }
-
-
-
-
