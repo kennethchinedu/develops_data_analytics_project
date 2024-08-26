@@ -1,15 +1,12 @@
-name: CI_dev Workflow
+name: Cd_prod Workflow
 
 on:
-#   push:
-#     branches:
-#       - master
   pull_request:
     branches:
       - master 
   
   workflow_dispatch:
-
+#Runs on self hoster server
 jobs:
   Test:
     name: Run on test
@@ -93,5 +90,7 @@ jobs:
       - name: Goodbye world
         run: echo "Bye World"
         shell: bash
+
+
 
 
