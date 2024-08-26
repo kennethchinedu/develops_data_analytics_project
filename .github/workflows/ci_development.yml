@@ -68,15 +68,21 @@ jobs:
         shell: bash
 
       - name: Run dbt deps
-        run: dbt deps --profiles-dir ~/.dbt
+        run: | 
+          cd dags/dbt
+          dbt deps --profiles-dir ~/.dbt
         shell: bash
 
       - name: Run dbt test with linkedin_project profile
-        run: dbt test --profiles-dir ~/.dbt --profile linkedin_project
+        run: |
+          cd dags/dbt
+          dbt test --profiles-dir ~/.dbt --profile linkedin_project
         shell: bash
       
       - name: Run dbt with linkedin_project profile
-        run: dbt run --profiles-dir ~/.dbt --profile linkedin_project
+        run: |
+          cd dags/dbt
+          dbt run --profiles-dir ~/.dbt --profile linkedin_project
         shell: bash
 
   goodbye:
