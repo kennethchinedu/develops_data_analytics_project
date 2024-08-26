@@ -6,7 +6,7 @@ on:
       - master 
   
   workflow_dispatch:
-#Runs on self hoster server
+#Runs on self hoster server in AWS
 jobs:
   Test:
     name: Run on test
