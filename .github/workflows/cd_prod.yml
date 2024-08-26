@@ -6,7 +6,7 @@ on:
       - master 
   
   workflow_dispatch:
-#Runs on self hoster server
+#Runs on self hoster server in AWS
 jobs:
   Test:
     name: Run on test
@@ -33,6 +33,11 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.*'  
+
+      - name: Stop existing Astronomer environment (if any)
+        run: |
+            sudo astro dev stop || true
+        shell: bash
 
       - name: Install astronomer
         run: sudo astro dev start
