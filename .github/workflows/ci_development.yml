@@ -47,7 +47,7 @@ jobs:
 
       - name: Install requirements
         run: |
-          pip install -r setup/requirements.txt
+          pip install -r requirements.txt
         shell: bash
 #------------------------------------
       - name: Prepare dbt profiles
