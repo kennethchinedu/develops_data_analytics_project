@@ -3,48 +3,48 @@ provider "aws" {
 }
 
 #creating vpc
-resource "aws_vpc" "myvpc" {
-  cidr_block = var.cidr
+# resource "aws_vpc" "myvpc" {
+#   cidr_block = var.cidr
   
 
-  tags = {
-    Name = "myvpc"
-  }
-}
+#   tags = {
+#     Name = "myvpc"
+#   }
+# }
 
 #This subnet automatically assigns public ip to any Ec2 launched into it 
-resource "aws_subnet" "subnet1" {
-  vpc_id = aws_vpc.myvpc.id  
-  cidr_block = "172.10.1.0/24"
-  availability_zone = var.availability_zone_a
-  map_public_ip_on_launch = true
-}
+# resource "aws_subnet" "subnet1" {
+#   vpc_id = aws_vpc.myvpc.id  
+#   cidr_block = "172.10.1.0/24"
+#   availability_zone = var.availability_zone_a
+#   map_public_ip_on_launch = true
+# }
 
 
-resource "aws_internet_gateway" "gateway" {
-  vpc_id = aws_vpc.myvpc.id
-}
+# resource "aws_internet_gateway" "gateway" {
+#   vpc_id = aws_vpc.myvpc.id
+# }
 
-#Route table for our vpc
-resource "aws_route_table" "rt" {
-  vpc_id = aws_vpc.myvpc.id  
-    #This internet gateway allows all network access to our vpc
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.gateway.id
-  }
+# #Route table for our vpc
+# resource "aws_route_table" "rt" {
+#   vpc_id = aws_vpc.myvpc.id  
+#     #This internet gateway allows all network access to our vpc
+#   route {
+#     cidr_block = "0.0.0.0/0"
+#     gateway_id = aws_internet_gateway.gateway.id
+#   }
 
-  tags = {
-    Name = "tf_project_rt"
-  }
-}
+#   tags = {
+#     Name = "tf_project_rt"
+#   }
+# }
 
 
 # Associating this route table with our subnet
-resource "aws_route_table_association" "rt_association1" {
-  subnet_id      = aws_subnet.subnet1.id  
-  route_table_id = aws_route_table.rt.id
-}
+# resource "aws_route_table_association" "rt_association1" {
+#   subnet_id      = aws_subnet.subnet1.id  
+#   route_table_id = aws_route_table.rt.id
+# }
 
 
 
@@ -64,9 +64,16 @@ resource "aws_route_table_association" "rt_association1" {
 # }
 
 # Creating security group with multiple ingress rules
+
+resource "aws_key_pair" "deployer" {
+  key_name   = "deployer-key"
+  public_key = file(var.key_path)
+}
+
+
 resource "aws_security_group" "sg" {
   description = "Allow TLS inbound traffic and all outbound traffic"
-  vpc_id      = aws_vpc.myvpc.id  
+
 
 
 
@@ -99,15 +106,18 @@ resource "aws_instance" "server1" {
   vpc_security_group_ids = [aws_security_group.sg.id]
   ami                    = var.ami
   instance_type          = var.instance_type
-  subnet_id              = aws_subnet.subnet1.id
+  key_name               = aws_key_pair.deployer.key_name
   tags = {
     Name = "dev-server"
   }
 
   user_data = <<EOF
 #!/bin/bash
+exec > /var/log/user-data.log 2>&1
+set -x
+
 # Update package list and install required packages
-apt-get update
+apt-get update -y
 apt-get install -y ca-certificates curl
 
 # Create directory and download Docker's GPG key
@@ -116,17 +126,17 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/doc
 chmod a+r /etc/apt/keyrings/docker.asc
 
 # Add Docker repository to apt sources
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+echo "deb [arch=\$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \$(. /etc/os-release && echo "\$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 # Update package list again and install Docker packages
-apt-get update
+apt-get update -y
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-usermod -aG docker $USER >> /var/log/user-data.log 2>&1
 
-curl -sSL install.astronomer.io | sudo bash -s
+# Add the current user to the Docker group
+usermod -aG docker ubuntu
+
+# Install Astronomer
+curl -sSL install.astronomer.io | bash -s
+
 EOF
 }
-
-
-
-
