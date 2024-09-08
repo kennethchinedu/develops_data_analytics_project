@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Test:
+  dbt_test:
     name: Run on test
     defaults:
       run:
@@ -82,10 +82,10 @@ jobs:
           dbt run --profiles-dir ~/.dbt --profile linkedin_project
         shell: bash
 
-  goodbye:
-    needs: Test
+  complete:
+    needs: dbt_test
     runs-on: ubuntu-latest
     steps:
-      - name: Goodbye world
-        run: echo "Bye World"
+      - name: completed dbt test
+        run: echo "completed dbt job"
         shell: bash
